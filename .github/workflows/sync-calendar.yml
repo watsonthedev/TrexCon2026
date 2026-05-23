@@ -1,0 +1,37 @@
+name: Sync Google Calendar
+
+on:
+  schedule:
+    # Runs every hour at :00 (UTC). Adjust as needed.
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual runs from the GitHub Actions tab
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to commit & push scheduleData.ts
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Sync calendar → scheduleData.ts
+        run: node scripts/sync-calendar.mjs
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/scheduleData.ts
+          if git diff --cached --quiet; then
+            echo "No changes — calendar is up to date."
+          else
+            git commit -m "chore: sync schedule from Google Calendar [skip ci]"
+            git push
+          fi
