@@ -46,11 +46,17 @@ function toLocalTime(date) {
   return `${h12}:${String(min).padStart(2, '0')} ${ampm}`
 }
 
-/** Get the local day-of-week name for a UTC Date using UTC_OFFSET_HOURS */
-function toLocalDayLabel(date) {
+/** Get the local date info for a UTC Date using UTC_OFFSET_HOURS */
+function toLocalDateInfo(date) {
   const localMs = date.getTime() + UTC_OFFSET_HOURS * 3600 * 1000
   const localDate = new Date(localMs)
-  return DAY_NAMES[localDate.getUTCDay()]
+  const year = localDate.getUTCFullYear()
+  const month = String(localDate.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(localDate.getUTCDate()).padStart(2, '0')
+  return {
+    dayLabel: DAY_NAMES[localDate.getUTCDay()],
+    isoDate: `${year}-${month}-${day}`,
+  }
 }
 
 /** Guess an EventCategory from the event title */
@@ -87,25 +93,26 @@ function parseEvents(icalText) {
       if (!startDate || !endDate) return null
 
       const title = prop('SUMMARY') || `Event ${i + 1}`
+      const { dayLabel, isoDate } = toLocalDateInfo(startDate)
 
       return {
         id: `cal${String(i + 1).padStart(2, '0')}`,
         title,
         details: prop('DESCRIPTION').replace(/\\n/g, ' ').replace(/\\,/g, ','),
         category: inferCategory(title),
-        dayLabel: toLocalDayLabel(startDate),
+        dayLabel,
+        isoDate,
         startTime: toLocalTime(startDate),
         endTime: toLocalTime(endDate),
         location: prop('LOCATION').replace(/\\,/g, ','),
+        // Keep raw timestamp for sorting only
+        _startMs: startDate.getTime(),
       }
     })
     .filter(Boolean)
-    // Sort by day then start time
-    .sort((a, b) => {
-      const dayOrder = DAY_NAMES.indexOf(a.dayLabel) - DAY_NAMES.indexOf(b.dayLabel)
-      if (dayOrder !== 0) return dayOrder
-      return a.startTime.localeCompare(b.startTime)
-    })
+    // Sort chronologically by actual start timestamp
+    .sort((a, b) => a._startMs - b._startMs)
+    .map(({ _startMs, ...e }) => e) // strip the internal sort key
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
@@ -134,6 +141,7 @@ const lines = [
       `    details: ${JSON.stringify(e.details)},`,
       `    category: '${e.category}',`,
       `    dayLabel: ${JSON.stringify(e.dayLabel)},`,
+      `    isoDate: ${JSON.stringify(e.isoDate)},`,
       `    startTime: ${JSON.stringify(e.startTime)},`,
       `    endTime: ${JSON.stringify(e.endTime)},`,
       `    location: ${JSON.stringify(e.location)},`,

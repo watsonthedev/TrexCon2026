@@ -3,18 +3,26 @@ import { events } from '../data/scheduleData'
 import { EventCard } from './EventCard'
 import { RSVPModal } from './RSVPModal'
 
-const DAY_ORDER = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+// Unique dates in chronological order
+const sortedDates = [...new Set(events.map(e => e.isoDate))].sort()
 
-// Derive unique days from actual events, sorted by day-of-week
-const days = [...new Set(events.map(e => e.dayLabel))].sort(
-  (a, b) => DAY_ORDER.indexOf(a) - DAY_ORDER.indexOf(b)
-)
+/** Format '2026-05-26' → 'Tuesday, May 26' */
+function formatDateHeader(isoDate: string) {
+  // Parse as UTC noon to avoid timezone-shift date changes
+  const d = new Date(`${isoDate}T12:00:00Z`)
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
 
 export function ScheduleView() {
   const [rsvpOpen, setRsvpOpen] = useState(false)
 
-  const groupedByDay = days.reduce<Record<string, typeof events>>((acc, day) => {
-    acc[day] = events.filter(e => e.dayLabel === day)
+  const groupedByDate = sortedDates.reduce<Record<string, typeof events>>((acc, date) => {
+    acc[date] = events.filter(e => e.isoDate === date)
     return acc
   }, {})
 
@@ -34,19 +42,19 @@ export function ScheduleView() {
         </header>
 
         <main className="max-w-2xl mx-auto px-4 py-6 space-y-8">
-          {days.map(day => (
-            <section key={day}>
+          {sortedDates.map(date => (
+            <section key={date}>
               <h2 className="text-green-500 font-bold text-xs uppercase tracking-widest mb-3">
-                {day}
+                {formatDateHeader(date)}
               </h2>
               <div className="space-y-3">
-                {groupedByDay[day].map(event => (
+                {groupedByDate[date].map(event => (
                   <EventCard key={event.id} event={event} />
                 ))}
               </div>
             </section>
           ))}
-          {days.length === 0 && (
+          {sortedDates.length === 0 && (
             <p className="text-gray-600 text-center py-16">No events scheduled yet.</p>
           )}
         </main>
