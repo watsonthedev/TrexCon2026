@@ -81,7 +81,6 @@ export function RSVPModal({ onClose }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // TODO: wire up to a backend / form service
-    console.log('RSVP submitted:', form)
     setSubmitted(true)
   }
 
