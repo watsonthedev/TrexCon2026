@@ -6,7 +6,14 @@ export function EventCard({ event }: { event: Event }) {
       <div>
         <h3 className="text-white font-semibold leading-snug">{event.title}</h3>
         {event.location && (
-          <p className="text-gray-500 text-xs mt-0.5">{event.location}</p>
+          <a
+            href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-green-500 hover:text-green-400 text-xs mt-0.5 underline underline-offset-2"
+          >
+            {event.location}
+          </a>
         )}
       </div>
       <p className="text-gray-400 text-xs shrink-0 text-right">
