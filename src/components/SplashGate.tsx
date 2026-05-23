@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 
 // ── Change the passcode here ──────────────────────────────────────────────────
-const PASSCODE = 'trex2026'
+const PASSCODE = 'hammonds'
 // ─────────────────────────────────────────────────────────────────────────────
 
 const AVATAR_URL =
