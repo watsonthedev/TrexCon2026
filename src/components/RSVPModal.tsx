@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 
 interface Props {
   onClose: () => void
@@ -26,13 +27,13 @@ const EMPTY: FormData = {
   twitchUsername: '',
   nickname: '',
   arrivalFlight: '',
-  arrivalDate: '',
-  arrivalTime: '',
+  arrivalDate: '2026-06-18',    // Convention starts Thursday June 18
+  arrivalTime: '15:00',         // Default 3pm
   hotel: '',
-  hotelCheckin: '',
+  hotelCheckin: '2026-06-18',
   departureFlight: '',
-  departureDate: '',
-  departureTime: '',
+  departureDate: '2026-06-21',  // Day after convention ends
+  departureTime: '10:00',       // Default 10am
   needsRide: null,
 }
 
@@ -74,13 +75,39 @@ const inputClass =
 export function RSVPModal({ onClose }: Props) {
   const [form, setForm] = useState<FormData>(EMPTY)
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const set = <K extends keyof FormData>(key: K, val: FormData[K]) =>
     setForm(f => ({ ...f, [key]: val }))
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: wire up to a backend / form service
+    setLoading(true)
+    setError(null)
+
+    const { error } = await supabase.from('rsvps').insert({
+      twitch_username:  form.twitchUsername,
+      nickname:         form.nickname         || null,
+      arrival_flight:   form.arrivalFlight    || null,
+      arrival_date:     form.arrivalDate      || null,
+      arrival_time:     form.arrivalTime      || null,
+      hotel:            form.hotel            || null,
+      hotel_checkin:    form.hotelCheckin     || null,
+      departure_flight: form.departureFlight  || null,
+      departure_date:   form.departureDate    || null,
+      departure_time:   form.departureTime    || null,
+      needs_ride:       form.needsRide,
+    })
+
+    setLoading(false)
+
+    if (error) {
+      setError('Something went wrong — please try again.')
+      console.error('RSVP insert error:', error)
+      return
+    }
+
     setSubmitted(true)
   }
 
@@ -309,12 +336,18 @@ export function RSVPModal({ onClose }: Props) {
                 </div>
               </div>
 
+              {/* Error */}
+              {error && (
+                <p className="text-red-400 text-sm text-center">{error}</p>
+              )}
+
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-3 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm tracking-wide transition-all"
+                disabled={loading}
+                className="w-full py-3 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold text-sm tracking-wide transition-all"
               >
-                I'll be there! 🦖
+                {loading ? 'Sending…' : "I'll be there! 🦖"}
               </button>
 
               {/* Spacer so last field isn't flush to the scroll edge */}

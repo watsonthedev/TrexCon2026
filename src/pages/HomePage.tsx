@@ -26,6 +26,12 @@ export function HomePage() {
           <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
             <h1 className="text-2xl font-bold tracking-tight">TrexCon 2026</h1>
             <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => navigate('/rsvps')}
+                className="px-3 py-2 rounded-lg text-gray-400 hover:text-white text-sm font-medium transition-all"
+              >
+                Attendees
+              </button>
               <a
                 href="https://discord.com/channels/199772014653734912/1502359278265307187"
                 target="_blank"
