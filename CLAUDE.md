@@ -81,4 +81,3 @@ Edit `src/data/scheduleData.ts`. Each event follows the `Event` interface in `sr
 ## Convention Details
 - **Convention name**: TrexCon
 - **Streamer**: Trexcapades
- 
