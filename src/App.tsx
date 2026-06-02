@@ -14,7 +14,7 @@ export function App() {
 
   return (
     <BrowserRouter>
-      {import.meta.env.DEV && (
+      {import.meta.env.VITE_APP_ENV === 'development' && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black text-center text-sm font-bold py-1">
           DEV ENVIRONMENT
         </div>
