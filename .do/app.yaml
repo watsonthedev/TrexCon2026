@@ -1,0 +1,33 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+envs:
+- key: VITE_SUPABASE_URL
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: EV[1:4oxAlXnZgePQGGWgOoecX5/C57U4572A:LfVAtsSno8n1LADB9esbHEsvm28EHdODjv5+JiWp/cUnfZxTTqANGE8TzW0KPSMzqX8mOtDEFOk=]
+- key: VITE_SUPABASE_ANON_KEY
+  scope: BUILD_TIME
+  type: SECRET
+  value: EV[1:B4Kjgq03g9CiUHPOC7WVLmJC1JzEsF/O:Py6KJjddEwG75jSEv1YSwh351VyVjt/azv27B5+SMUDnJsLaWGMDHhyFROeY9hzqp3Y7Wgmqma0iJFNkjuY=]
+features:
+- buildpack-stack=ubuntu-22
+ingress:
+  rules:
+  - component:
+      name: dev
+    match:
+      path:
+        prefix: /
+name: dev-app
+region: nyc
+static_sites:
+- build_command: npm run build:dev
+  catchall_document: index.html
+  environment_slug: node-js
+  github:
+    branch: dev
+    deploy_on_push: true
+    repo: watsonthedev/TrexCon2026
+  name: dev
+  source_dir: /

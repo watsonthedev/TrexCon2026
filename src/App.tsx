@@ -6,14 +6,19 @@ import { ScheduleView } from './components/ScheduleView'
 import { RSVPsPage } from './pages/RSVPsPage'
 
 export function App() {
-  const [unlocked, setUnlocked] = useState(false)
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('unlocked') === 'true')
 
   if (!unlocked) {
-    return <SplashGate onUnlock={() => setUnlocked(true)} />
+    return <SplashGate onUnlock={() => { sessionStorage.setItem('unlocked', 'true'); setUnlocked(true) }} />
   }
 
   return (
     <BrowserRouter>
+      {import.meta.env.VITE_APP_ENV === 'development' && (
+        <div className="w-full bg-yellow-400 text-black text-center text-sm font-bold py-1">
+          DEV ENVIRONMENT
+        </div>
+      )}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/schedule" element={<ScheduleView />} />
