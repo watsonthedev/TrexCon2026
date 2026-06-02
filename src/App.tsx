@@ -14,6 +14,11 @@ export function App() {
 
   return (
     <BrowserRouter>
+      {import.meta.env.DEV && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-400 text-black text-center text-sm font-bold py-1">
+          DEV ENVIRONMENT
+        </div>
+      )}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/schedule" element={<ScheduleView />} />
