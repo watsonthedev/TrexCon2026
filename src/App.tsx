@@ -6,10 +6,10 @@ import { ScheduleView } from './components/ScheduleView'
 import { RSVPsPage } from './pages/RSVPsPage'
 
 export function App() {
-  const [unlocked, setUnlocked] = useState(false)
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('unlocked') === 'true')
 
   if (!unlocked) {
-    return <SplashGate onUnlock={() => setUnlocked(true)} />
+    return <SplashGate onUnlock={() => { sessionStorage.setItem('unlocked', 'true'); setUnlocked(true) }} />
   }
 
   return (
