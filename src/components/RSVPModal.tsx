@@ -333,7 +333,7 @@ export function RSVPModal({ onClose }: Props) {
                 </p>
                 <p className="text-gray-400 text-sm">
                   {driving
-                    ? 'Are you willing to carpool?'
+                    ? 'Are you willing to provide a carpool?'
                     : 'Do you need help getting from Denver (DEN) to Fort Collins?'}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
