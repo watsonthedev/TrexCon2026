@@ -157,23 +157,37 @@ export function RSVPsPage() {
                 </div>
 
                 {/* Arrival */}
-                <div className="text-sm">
-                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Arrival</p>
-                  <p className="text-gray-300">
-                    {formatDate(r.arrival_date)}
-                    {r.arrival_time ? ` · ${formatTime(r.arrival_time)}` : ''}
-                    {r.arrival_flight ? ` · ${r.arrival_flight}` : ''}
-                  </p>
+                <div className="text-sm space-y-2">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Arrival</p>
+                    <p className="text-gray-300">
+                      {formatDate(r.arrival_date)}
+                      {r.arrival_time ? ` · ${formatTime(r.arrival_time)}` : ''}
+                    </p>
+                  </div>
+                  {r.arrival_flight && (
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
+                      <p className="text-gray-300">{r.arrival_flight}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Departure */}
-                <div className="text-sm">
-                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Departure</p>
-                  <p className="text-gray-300">
-                    {formatDate(r.departure_date)}
-                    {r.departure_time ? ` · ${formatTime(r.departure_time)}` : ''}
-                    {r.departure_flight ? ` · ${r.departure_flight}` : ''}
-                  </p>
+                <div className="text-sm space-y-2">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Departure</p>
+                    <p className="text-gray-300">
+                      {formatDate(r.departure_date)}
+                      {r.departure_time ? ` · ${formatTime(r.departure_time)}` : ''}
+                    </p>
+                  </div>
+                  {r.departure_flight && (
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
+                      <p className="text-gray-300">{r.departure_flight}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hotel */}
