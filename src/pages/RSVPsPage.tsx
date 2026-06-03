@@ -146,9 +146,8 @@ export function RSVPsPage() {
                     </span>
                     {/* Carpool/ride sub-pill */}
                     {r.driving ? (
-                      r.needs_ride === true
-                        ? <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">Can provide carpool</span>
-                        : <span className="text-xs text-red-400 border border-red-400/30 bg-red-400/10 rounded-full px-2 py-0.5">No carpool</span>
+                      r.needs_ride === true &&
+                        <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">Can provide carpool</span>
                     ) : (
                       r.needs_ride === true &&
                         <span className="text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">Needs ride</span>
