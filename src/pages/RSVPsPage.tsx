@@ -131,17 +131,29 @@ export function RSVPsPage() {
                 key={r.id}
                 className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2"
               >
-                {/* Name */}
-                <div className="sm:col-span-2 flex items-baseline gap-2 mb-1">
-                  <span className="text-white font-bold">@{r.twitch_username}</span>
-                  {r.nickname && (
-                    <span className="text-gray-400 text-sm">"{r.nickname}"</span>
-                  )}
-                  {r.needs_ride === true && !r.driving && (
-                    <span className="ml-auto text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">
-                      Needs ride
+                {/* Name + pills */}
+                <div className="sm:col-span-2 flex items-start justify-between gap-2 mb-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-white font-bold">@{r.twitch_username}</span>
+                    {r.nickname && (
+                      <span className="text-gray-400 text-sm">"{r.nickname}"</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    {/* Transport pill */}
+                    <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">
+                      {r.driving ? 'Driving' : 'Flying'}
                     </span>
-                  )}
+                    {/* Carpool/ride sub-pill */}
+                    {r.driving ? (
+                      r.needs_ride === true
+                        ? <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">Can provide carpool</span>
+                        : <span className="text-xs text-red-400 border border-red-400/30 bg-red-400/10 rounded-full px-2 py-0.5">No carpool</span>
+                    ) : (
+                      r.needs_ride === true &&
+                        <span className="text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">Needs ride</span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Arrival */}
