@@ -38,6 +38,7 @@ export function RSVPsPage() {
   const [rsvps, setRsvps] = useState<RSVP[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [errorDetail, setErrorDetail] = useState<string | null>(null)
 
   useEffect(() => {
     supabase
@@ -47,6 +48,7 @@ export function RSVPsPage() {
       .then(({ data, error }) => {
         if (error) {
           setError('Failed to load RSVPs.')
+          setErrorDetail(error.message)
           console.error(error)
         } else {
           setRsvps(data ?? [])
@@ -79,7 +81,12 @@ export function RSVPsPage() {
         )}
 
         {error && (
-          <div className="text-red-400 text-sm text-center py-20">{error}</div>
+          <div className="text-red-400 text-sm text-center py-20">
+            <p>{error}</p>
+            {errorDetail && (
+              <p className="mt-1 text-red-500/70 text-xs">Error: {errorDetail}</p>
+            )}
+          </div>
         )}
 
         {!loading && !error && rsvps.length === 0 && (
