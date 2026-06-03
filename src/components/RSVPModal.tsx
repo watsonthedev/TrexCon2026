@@ -163,7 +163,7 @@ export function RSVPModal({ onClose }: Props) {
             <div>
               <h2 className="text-white font-bold text-lg tracking-tight">RSVP for TrexCon 2026</h2>
               {confirming
-                ? !loading && <p className="text-red-400 text-sm mt-0.5">Once you hit confirm you will not be able to edit this info.<br />If you need to make changes please contact Trex.</p>
+                ? (!loading && !submitted) && <p className="text-red-400 text-sm mt-0.5">Once you hit confirm you will not be able to edit this info. If you need to make changes please contact Trex.</p>
                 : <p className="text-gray-500 text-sm mt-0.5">Lock in your spot. We'll see you there.</p>
               }
             </div>
