@@ -92,12 +92,18 @@ export function RSVPModal({ onClose }: Props) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [usernameError, setUsernameError] = useState(false)
 
   const set = <K extends keyof FormData>(key: K, val: FormData[K]) =>
     setForm(f => ({ ...f, [key]: val }))
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.twitchUsername.trim()) {
+      setUsernameError(true)
+      return
+    }
+    setUsernameError(false)
     setConfirming(true)
   }
 
@@ -303,11 +309,14 @@ export function RSVPModal({ onClose }: Props) {
                     <input
                       type="text"
                       value={form.twitchUsername}
-                      onChange={e => set('twitchUsername', e.target.value)}
+                      onChange={e => { set('twitchUsername', e.target.value); setUsernameError(false) }}
                       placeholder="your_username"
                       className={`${inputClass} pl-8`}
                     />
                   </div>
+                  {usernameError && (
+                    <p className="text-red-400 text-xs mt-1">Username is a required field</p>
+                  )}
                 </Field>
 
                 <Field label="Nickname" hint="(optional)">
