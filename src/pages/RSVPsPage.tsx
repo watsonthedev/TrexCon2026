@@ -17,6 +17,7 @@ interface RSVP {
   departure_date: string | null
   departure_time: string | null
   needs_ride: boolean | null
+  driving: boolean | null
 }
 
 function formatDate(iso: string | null) {
@@ -136,7 +137,7 @@ export function RSVPsPage() {
                   {r.nickname && (
                     <span className="text-gray-400 text-sm">"{r.nickname}"</span>
                   )}
-                  {r.needs_ride === true && (
+                  {r.needs_ride === true && !r.driving && (
                     <span className="ml-auto text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">
                       Needs ride
                     </span>

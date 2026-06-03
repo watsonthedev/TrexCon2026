@@ -99,6 +99,7 @@ export function RSVPModal({ onClose }: Props) {
       departure_date:   form.departureDate    || null,
       departure_time:   form.departureTime    || null,
       needs_ride:       form.needsRide,
+      driving:          driving,
     })
 
     setLoading(false)
