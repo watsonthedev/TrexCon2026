@@ -156,7 +156,10 @@ export function RSVPModal({ onClose }: Props) {
           <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/8 shrink-0">
             <div>
               <h2 className="text-white font-bold text-lg tracking-tight">RSVP for TrexCon 2026</h2>
-              <p className="text-gray-500 text-sm mt-0.5">Lock in your spot. We'll see you there.</p>
+              {confirming
+                ? <p className="text-red-400 text-sm mt-0.5">Once you hit confirm you will not be able to edit this info. If you need to make changes please contact Trex.</p>
+                : <p className="text-gray-500 text-sm mt-0.5">Lock in your spot. We'll see you there.</p>
+              }
             </div>
             <button
               onClick={onClose}
@@ -247,7 +250,7 @@ export function RSVPModal({ onClose }: Props) {
                   onClick={() => setConfirming(false)}
                   className="py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/30 hover:text-white text-sm font-semibold transition-all"
                 >
-                  Cancel
+                  Edit
                 </button>
                 <button
                   type="button"
