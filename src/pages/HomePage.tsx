@@ -9,14 +9,14 @@ function getNowAndNext() {
   const current = events.find(
     e => now >= eventStartMs(e.isoDate, e.startTime) && now < eventEndMs(e.isoDate, e.endTime)
   )
-  const next = events.find(e => eventStartMs(e.isoDate, e.startTime) > now)
-  return { current, next }
+  const upcoming = events.filter(e => eventStartMs(e.isoDate, e.startTime) > now).slice(0, 3)
+  return { current, upcoming }
 }
 
 export function HomePage() {
   const navigate = useNavigate()
   const [rsvpOpen, setRsvpOpen] = useState(false)
-  const { current, next } = getNowAndNext()
+  const { current, upcoming } = getNowAndNext()
 
   return (
     <>
@@ -27,10 +27,22 @@ export function HomePage() {
             <h1 className="text-2xl font-bold tracking-tight">TrexCon 2026</h1>
             <div className="flex items-center gap-2 shrink-0">
               <button
+                onClick={() => navigate('/schedule')}
+                className="px-3 py-2 rounded-lg text-gray-400 hover:text-white text-sm font-medium transition-all"
+              >
+                Itinerary
+              </button>
+              <button
                 onClick={() => navigate('/rsvps')}
                 className="px-3 py-2 rounded-lg text-gray-400 hover:text-white text-sm font-medium transition-all"
               >
                 Attendees
+              </button>
+              <button
+                onClick={() => setRsvpOpen(true)}
+                className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm tracking-wide transition-all"
+              >
+                RSVP
               </button>
               <a
                 href="https://discord.com/channels/199772014653734912/1502359278265307187"
@@ -44,12 +56,6 @@ export function HomePage() {
                 </svg>
                 Discord
               </a>
-              <button
-                onClick={() => setRsvpOpen(true)}
-                className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm tracking-wide transition-all"
-              >
-                RSVP
-              </button>
             </div>
           </div>
         </header>
@@ -90,24 +96,28 @@ export function HomePage() {
           )}
 
           {/* Up Next */}
-          {next ? (
+          {upcoming.length > 0 ? (
             <section>
               <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-3">Up Next</p>
-              <div className="bg-white/5 rounded-xl px-5 py-4">
-                <h2 className="text-white text-lg font-bold leading-snug">{next.title}</h2>
-                {next.location && (
-                  <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(next.location)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-500 hover:text-green-400 text-xs underline underline-offset-2 mt-0.5 inline-block"
-                  >
-                    {next.location}
-                  </a>
-                )}
-                <p className="text-gray-400 text-sm mt-1">
-                  {next.startTime} – {next.endTime}
-                </p>
+              <div className="space-y-2">
+                {upcoming.map(event => (
+                  <div key={event.id} className="bg-white/5 rounded-xl px-5 py-4">
+                    <h2 className="text-white text-lg font-bold leading-snug">{event.title}</h2>
+                    {event.location && (
+                      <a
+                        href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-500 hover:text-green-400 text-xs underline underline-offset-2 mt-0.5 inline-block"
+                      >
+                        {event.location}
+                      </a>
+                    )}
+                    <p className="text-gray-400 text-sm mt-1">
+                      {event.startTime} – {event.endTime}
+                    </p>
+                  </div>
+                ))}
               </div>
             </section>
           ) : events.length > 0 ? (
