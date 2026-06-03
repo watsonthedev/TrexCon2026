@@ -9,14 +9,14 @@ function getNowAndNext() {
   const current = events.find(
     e => now >= eventStartMs(e.isoDate, e.startTime) && now < eventEndMs(e.isoDate, e.endTime)
   )
-  const next = events.find(e => eventStartMs(e.isoDate, e.startTime) > now)
-  return { current, next }
+  const upcoming = events.filter(e => eventStartMs(e.isoDate, e.startTime) > now).slice(0, 3)
+  return { current, upcoming }
 }
 
 export function HomePage() {
   const navigate = useNavigate()
   const [rsvpOpen, setRsvpOpen] = useState(false)
-  const { current, next } = getNowAndNext()
+  const { current, upcoming } = getNowAndNext()
 
   return (
     <>
@@ -90,24 +90,28 @@ export function HomePage() {
           )}
 
           {/* Up Next */}
-          {next ? (
+          {upcoming.length > 0 ? (
             <section>
               <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mb-3">Up Next</p>
-              <div className="bg-white/5 rounded-xl px-5 py-4">
-                <h2 className="text-white text-lg font-bold leading-snug">{next.title}</h2>
-                {next.location && (
-                  <a
-                    href={`https://maps.google.com/?q=${encodeURIComponent(next.location)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-500 hover:text-green-400 text-xs underline underline-offset-2 mt-0.5 inline-block"
-                  >
-                    {next.location}
-                  </a>
-                )}
-                <p className="text-gray-400 text-sm mt-1">
-                  {next.startTime} – {next.endTime}
-                </p>
+              <div className="space-y-2">
+                {upcoming.map(event => (
+                  <div key={event.id} className="bg-white/5 rounded-xl px-5 py-4">
+                    <h2 className="text-white text-lg font-bold leading-snug">{event.title}</h2>
+                    {event.location && (
+                      <a
+                        href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-green-500 hover:text-green-400 text-xs underline underline-offset-2 mt-0.5 inline-block"
+                      >
+                        {event.location}
+                      </a>
+                    )}
+                    <p className="text-gray-400 text-sm mt-1">
+                      {event.startTime} – {event.endTime}
+                    </p>
+                  </div>
+                ))}
               </div>
             </section>
           ) : events.length > 0 ? (
