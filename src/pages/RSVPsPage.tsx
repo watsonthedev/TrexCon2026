@@ -65,7 +65,15 @@ export function RSVPsPage() {
       {/* Header */}
       <header className="sticky top-0 z-10 bg-[#0d0d0d]/95 backdrop-blur border-b border-white/10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-bold tracking-tight">TrexCon 2026</h1>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
+            >
+              ← Back
+            </button>
+            <h1 className="text-2xl font-bold tracking-tight">Attendees</h1>
+          </div>
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setRsvpOpen(true)}
