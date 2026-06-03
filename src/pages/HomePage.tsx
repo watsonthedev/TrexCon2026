@@ -60,6 +60,24 @@ export function HomePage() {
           </div>
         </header>
 
+        {/* Mobile-only nav row */}
+        <div className="sm:hidden border-b border-white/10 bg-[#0d0d0d]/95">
+          <div className="max-w-2xl mx-auto px-4 flex gap-1 py-1">
+            <button
+              onClick={() => navigate('/schedule')}
+              className="px-3 py-2 rounded-lg text-gray-400 hover:text-white text-sm font-medium transition-all"
+            >
+              Itinerary
+            </button>
+            <button
+              onClick={() => navigate('/rsvps')}
+              className="px-3 py-2 rounded-lg text-gray-400 hover:text-white text-sm font-medium transition-all"
+            >
+              Attendees
+            </button>
+          </div>
+        </div>
+
         <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-8 space-y-6">
 
           {/* Happening Now */}
