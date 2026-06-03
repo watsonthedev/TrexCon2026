@@ -202,10 +202,10 @@ export function RSVPModal({ onClose }: Props) {
                       {form.arrivalTime ? ` · ${formatTime(form.arrivalTime)}` : ''}
                     </p>
                   </div>
-                  {!driving && form.arrivalFlight && (
+                  {!driving && (
                     <div>
                       <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
-                      <p className="text-gray-300">{form.arrivalFlight}</p>
+                      <p className="text-gray-300">{form.arrivalFlight || '—'}</p>
                     </div>
                   )}
                 </div>
@@ -219,10 +219,10 @@ export function RSVPModal({ onClose }: Props) {
                       {form.departureTime ? ` · ${formatTime(form.departureTime)}` : ''}
                     </p>
                   </div>
-                  {!driving && form.departureFlight && (
+                  {!driving && (
                     <div>
                       <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
-                      <p className="text-gray-300">{form.departureFlight}</p>
+                      <p className="text-gray-300">{form.departureFlight || '—'}</p>
                     </div>
                   )}
                 </div>
