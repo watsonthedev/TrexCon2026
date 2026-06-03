@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { RSVPModal } from '../components/RSVPModal'
 
 interface RSVP {
   id: string
@@ -39,6 +40,7 @@ export function RSVPsPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [errorDetail, setErrorDetail] = useState<string | null>(null)
+  const [rsvpOpen, setRsvpOpen] = useState(false)
 
   useEffect(() => {
     supabase
@@ -58,6 +60,7 @@ export function RSVPsPage() {
   }, [])
 
   return (
+    <>
     <div className="min-h-screen bg-[#0d0d0d] text-white">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-[#0d0d0d]/95 backdrop-blur border-b border-white/10">
@@ -76,6 +79,14 @@ export function RSVPsPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-8">
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => setRsvpOpen(true)}
+            className="px-5 py-2 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm transition-all"
+          >
+            RSVP Now
+          </button>
+        </div>
         {loading && (
           <div className="text-gray-500 text-sm text-center py-20">Loading…</div>
         )}
@@ -157,5 +168,7 @@ export function RSVPsPage() {
         )}
       </main>
     </div>
+    {rsvpOpen && <RSVPModal onClose={() => setRsvpOpen(false)} />}
+    </>
   )
 }
