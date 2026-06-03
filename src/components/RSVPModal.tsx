@@ -74,6 +74,7 @@ const inputClass =
 
 export function RSVPModal({ onClose }: Props) {
   const [form, setForm] = useState<FormData>(EMPTY)
+  const [driving, setDriving] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -89,12 +90,12 @@ export function RSVPModal({ onClose }: Props) {
     const { error } = await supabase.from('rsvps').insert({
       twitch_username:  form.twitchUsername,
       nickname:         form.nickname         || null,
-      arrival_flight:   form.arrivalFlight    || null,
+      arrival_flight:   driving ? null : (form.arrivalFlight    || null),
       arrival_date:     form.arrivalDate      || null,
       arrival_time:     form.arrivalTime      || null,
       hotel:            form.hotel            || null,
       hotel_checkin:    form.hotelCheckin     || null,
-      departure_flight: form.departureFlight  || null,
+      departure_flight: driving ? null : (form.departureFlight  || null),
       departure_date:   form.departureDate    || null,
       departure_time:   form.departureTime    || null,
       needs_ride:       form.needsRide,
@@ -205,22 +206,37 @@ export function RSVPModal({ onClose }: Props) {
 
               {/* ── Arrival ───────────────────────────────────────────────── */}
               <div className="space-y-4">
-                <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold">
-                  Arrival
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold">
+                    Arrival
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setDriving(d => !d)}
+                    className={`text-xs font-medium px-2.5 py-1 rounded-full border transition-all ${
+                      driving
+                        ? 'bg-green-500/15 border-green-500/40 text-green-400'
+                        : 'bg-white/5 border-white/10 text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    🚗 I'm driving
+                  </button>
+                </div>
 
-                <Field label="Flight Number" hint="(optional)">
-                  <input
-                    type="text"
-                    value={form.arrivalFlight}
-                    onChange={e => set('arrivalFlight', e.target.value.toUpperCase())}
-                    placeholder="e.g. UA1234"
-                    className={inputClass}
-                  />
-                  {arrivalAirline && (
-                    <p className="text-green-400 text-xs mt-1">✓ {arrivalAirline}</p>
-                  )}
-                </Field>
+                {!driving && (
+                  <Field label="Flight Number" hint="(optional)">
+                    <input
+                      type="text"
+                      value={form.arrivalFlight}
+                      onChange={e => set('arrivalFlight', e.target.value.toUpperCase())}
+                      placeholder="e.g. UA1234"
+                      className={inputClass}
+                    />
+                    {arrivalAirline && (
+                      <p className="text-green-400 text-xs mt-1">✓ {arrivalAirline}</p>
+                    )}
+                  </Field>
+                )}
 
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Arrival Date">
@@ -274,18 +290,20 @@ export function RSVPModal({ onClose }: Props) {
                   Departure
                 </p>
 
-                <Field label="Flight Number" hint="(optional)">
-                  <input
-                    type="text"
-                    value={form.departureFlight}
-                    onChange={e => set('departureFlight', e.target.value.toUpperCase())}
-                    placeholder="e.g. DL5678"
-                    className={inputClass}
-                  />
-                  {departureAirline && (
-                    <p className="text-green-400 text-xs mt-1">✓ {departureAirline}</p>
-                  )}
-                </Field>
+                {!driving && (
+                  <Field label="Flight Number" hint="(optional)">
+                    <input
+                      type="text"
+                      value={form.departureFlight}
+                      onChange={e => set('departureFlight', e.target.value.toUpperCase())}
+                      placeholder="e.g. DL5678"
+                      className={inputClass}
+                    />
+                    {departureAirline && (
+                      <p className="text-green-400 text-xs mt-1">✓ {departureAirline}</p>
+                    )}
+                  </Field>
+                )}
 
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Departure Date">
@@ -313,13 +331,15 @@ export function RSVPModal({ onClose }: Props) {
                   Getting There
                 </p>
                 <p className="text-gray-400 text-sm">
-                  Do you need help getting from Denver (DEN) to Fort Collins?
+                  {driving
+                    ? 'Are you willing to carpool?'
+                    : 'Do you need help getting from Denver (DEN) to Fort Collins?'}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { val: true, label: 'Yes please' },
-                    { val: false, label: "I'm good" },
-                  ].map(opt => (
+                  {(driving
+                    ? [{ val: true, label: 'Yes I can carpool' }, { val: false, label: "No I'm riding solo" }]
+                    : [{ val: true, label: 'Yes please' }, { val: false, label: "I'm good" }]
+                  ).map(opt => (
                     <button
                       key={String(opt.val)}
                       type="button"
