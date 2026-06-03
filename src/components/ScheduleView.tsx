@@ -42,6 +42,12 @@ export function ScheduleView() {
               <h1 className="text-2xl font-bold tracking-tight">Itinerary</h1>
             </div>
             <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setRsvpOpen(true)}
+                className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm tracking-wide transition-all"
+              >
+                RSVP
+              </button>
               <a
                 href="https://discord.com/channels/199772014653734912/1502359278265307187"
                 target="_blank"
@@ -54,12 +60,6 @@ export function ScheduleView() {
                 </svg>
                 Discord
               </a>
-              <button
-                onClick={() => setRsvpOpen(true)}
-                className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm tracking-wide transition-all"
-              >
-                RSVP
-              </button>
             </div>
           </div>
         </header>
