@@ -113,14 +113,9 @@ export function RSVPsPage() {
         )}
 
         {!loading && !error && rsvps.length === 0 && (
-          <div className="flex flex-col items-center gap-4 py-20">
+          <div className="flex flex-col items-center gap-2 py-20">
             <p className="text-gray-500 text-sm">Nobody has RSVP'd yet — be the first!</p>
-            <button
-              onClick={() => navigate('/')}
-              className="px-5 py-2 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm transition-all"
-            >
-              RSVP Now
-            </button>
+            <p className="text-gray-600 text-sm">Just click the big green button above.</p>
           </div>
         )}
 
