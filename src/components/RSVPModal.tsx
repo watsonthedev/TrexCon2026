@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 
 interface Props {
   onClose: () => void
+  onSuccess?: () => void
 }
 
 interface FormData {
@@ -85,7 +86,7 @@ const inputClass =
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export function RSVPModal({ onClose }: Props) {
+export function RSVPModal({ onClose, onSuccess }: Props) {
   const [form, setForm] = useState<FormData>(EMPTY)
   const [driving, setDriving] = useState(false)
   const [confirming, setConfirming] = useState(false)
@@ -278,7 +279,7 @@ export function RSVPModal({ onClose }: Props) {
                 </p>
               </div>
               <button
-                onClick={onClose}
+                onClick={() => { onSuccess?.(); onClose() }}
                 className="mt-2 px-6 py-2.5 rounded-lg bg-green-500/10 hover:bg-green-500/20 text-green-400 text-sm font-medium border border-green-500/20 transition-all"
               >
                 Close

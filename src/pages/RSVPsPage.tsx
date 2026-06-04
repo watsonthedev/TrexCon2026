@@ -43,7 +43,8 @@ export function RSVPsPage() {
   const [errorDetail, setErrorDetail] = useState<string | null>(null)
   const [rsvpOpen, setRsvpOpen] = useState(false)
 
-  useEffect(() => {
+  const fetchRsvps = () => {
+    setLoading(true)
     supabase
       .from('rsvps')
       .select('*')
@@ -55,10 +56,14 @@ export function RSVPsPage() {
           console.error(error)
         } else {
           setRsvps(data ?? [])
+          setError(null)
+          setErrorDetail(null)
         }
         setLoading(false)
       })
-  }, [])
+  }
+
+  useEffect(() => { fetchRsvps() }, [])
 
   return (
     <>
@@ -200,7 +205,7 @@ export function RSVPsPage() {
         )}
       </main>
     </div>
-    {rsvpOpen && <RSVPModal onClose={() => setRsvpOpen(false)} />}
+    {rsvpOpen && <RSVPModal onClose={() => setRsvpOpen(false)} onSuccess={fetchRsvps} />}
     </>
   )
 }
