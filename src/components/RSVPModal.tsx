@@ -39,6 +39,19 @@ const EMPTY: FormData = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+function formatDate(iso: string) {
+  if (!iso) return '—'
+  return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatTime(t: string) {
+  if (!t) return '—'
+  const [h, m] = t.split(':').map(Number)
+  const ampm = h >= 12 ? 'PM' : 'AM'
+  const h12 = h % 12 || 12
+  return `${h12}:${String(m).padStart(2, '0')} ${ampm}`
+}
+
 function airlineFromFlight(flight: string): string | null {
   const code = flight.trim().toUpperCase().replace(/\d.*/, '')
   const airlines: Record<string, string> = {
@@ -75,6 +88,7 @@ const inputClass =
 export function RSVPModal({ onClose }: Props) {
   const [form, setForm] = useState<FormData>(EMPTY)
   const [driving, setDriving] = useState(false)
+  const [confirming, setConfirming] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -82,8 +96,12 @@ export function RSVPModal({ onClose }: Props) {
   const set = <K extends keyof FormData>(key: K, val: FormData[K]) =>
     setForm(f => ({ ...f, [key]: val }))
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setConfirming(true)
+  }
+
+  const handleConfirm = async () => {
     setLoading(true)
     setError(null)
 
@@ -99,6 +117,7 @@ export function RSVPModal({ onClose }: Props) {
       departure_date:   form.departureDate    || null,
       departure_time:   form.departureTime    || null,
       needs_ride:       form.needsRide,
+      driving:          driving,
     })
 
     setLoading(false)
@@ -106,6 +125,7 @@ export function RSVPModal({ onClose }: Props) {
     if (error) {
       setError('Something went wrong — please try again.')
       console.error('RSVP insert error:', error)
+      setConfirming(false)
       return
     }
 
@@ -136,7 +156,10 @@ export function RSVPModal({ onClose }: Props) {
           <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-white/8 shrink-0">
             <div>
               <h2 className="text-white font-bold text-lg tracking-tight">RSVP for TrexCon 2026</h2>
-              <p className="text-gray-500 text-sm mt-0.5">Lock in your spot. We'll see you there.</p>
+              {confirming
+                ? (!loading && !submitted) && <p className="text-red-400 text-sm mt-0.5">Once you hit confirm you will not be able to edit this info. If you need to make changes please contact Trex.</p>
+                : <p className="text-gray-500 text-sm mt-0.5">Lock in your spot. We'll see you there.</p>
+              }
             </div>
             <button
               onClick={onClose}
@@ -146,7 +169,101 @@ export function RSVPModal({ onClose }: Props) {
             </button>
           </div>
 
-          {submitted ? (
+          {confirming && !submitted ? (
+            // ── Preview / confirm ─────────────────────────────────────────────
+            <div className="overflow-y-auto px-6 py-5 space-y-5">
+              <p className="text-gray-400 text-sm">Does everything look right?</p>
+
+              {/* Attendee card preview */}
+              <div className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                {/* Name + pills */}
+                <div className="sm:col-span-2 flex items-start justify-between gap-2">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-white font-bold">@{form.twitchUsername}</span>
+                    {form.nickname && <span className="text-gray-400 text-sm">"{form.nickname}"</span>}
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">
+                      {driving ? 'Driving' : 'Flying'}
+                    </span>
+                    {driving ? (
+                      form.needsRide === true &&
+                        <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">Can provide carpool</span>
+                    ) : (
+                      form.needsRide === true &&
+                        <span className="text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">Needs ride</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Arrival */}
+                <div className="text-sm space-y-2">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Arrival</p>
+                    <p className="text-gray-300">
+                      {formatDate(form.arrivalDate)}
+                      {form.arrivalTime ? ` · ${formatTime(form.arrivalTime)}` : ''}
+                    </p>
+                  </div>
+                  {!driving && (
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
+                      <p className="text-gray-300">{form.arrivalFlight || '—'}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Departure */}
+                <div className="text-sm space-y-2">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Departure</p>
+                    <p className="text-gray-300">
+                      {formatDate(form.departureDate)}
+                      {form.departureTime ? ` · ${formatTime(form.departureTime)}` : ''}
+                    </p>
+                  </div>
+                  {!driving && (
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
+                      <p className="text-gray-300">{form.departureFlight || '—'}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Hotel */}
+                {(form.hotel || form.hotelCheckin) && (
+                  <div className="text-sm sm:col-span-2">
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Hotel</p>
+                    <p className="text-gray-300">
+                      {form.hotel}
+                      {form.hotelCheckin ? ` · Check-in ${formatDate(form.hotelCheckin)}` : ''}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setConfirming(false)}
+                  className="py-3 rounded-lg border border-white/15 text-gray-300 hover:border-white/30 hover:text-white text-sm font-semibold transition-all"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirm}
+                  disabled={loading}
+                  className="py-3 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold text-sm tracking-wide transition-all"
+                >
+                  {loading ? 'Sending…' : 'Confirm'}
+                </button>
+              </div>
+              <div className="h-1" />
+            </div>
+          ) : submitted ? (
             // ── Confirmation ──────────────────────────────────────────────────
             <div className="px-6 py-10 flex flex-col items-center text-center gap-4 animate-fade-in">
               <div className="w-14 h-14 rounded-full bg-green-500/15 flex items-center justify-center text-2xl">
@@ -332,7 +449,7 @@ export function RSVPModal({ onClose }: Props) {
                 </p>
                 <p className="text-gray-400 text-sm">
                   {driving
-                    ? 'Are you willing to carpool?'
+                    ? 'Are you willing to provide a carpool?'
                     : 'Do you need help getting from Denver (DEN) to Fort Collins?'}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
@@ -364,10 +481,9 @@ export function RSVPModal({ onClose }: Props) {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full py-3 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold text-sm tracking-wide transition-all"
+                className="w-full py-3 rounded-lg bg-green-500 hover:bg-green-400 active:bg-green-600 text-black font-bold text-sm tracking-wide transition-all"
               >
-                {loading ? 'Sending…' : "I'll be there! 🦖"}
+                I'll be there! 🦖
               </button>
 
               {/* Spacer so last field isn't flush to the scroll edge */}

@@ -17,6 +17,7 @@ interface RSVP {
   departure_date: string | null
   departure_time: string | null
   needs_ride: boolean | null
+  driving: boolean | null
 }
 
 function formatDate(iso: string | null) {
@@ -130,37 +131,62 @@ export function RSVPsPage() {
                 key={r.id}
                 className="bg-white/5 border border-white/10 rounded-xl px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2"
               >
-                {/* Name */}
-                <div className="sm:col-span-2 flex items-baseline gap-2 mb-1">
-                  <span className="text-white font-bold">@{r.twitch_username}</span>
-                  {r.nickname && (
-                    <span className="text-gray-400 text-sm">"{r.nickname}"</span>
-                  )}
-                  {r.needs_ride === true && (
-                    <span className="ml-auto text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">
-                      Needs ride
+                {/* Name + pills */}
+                <div className="sm:col-span-2 flex items-start justify-between gap-2 mb-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-white font-bold">@{r.twitch_username}</span>
+                    {r.nickname && (
+                      <span className="text-gray-400 text-sm">"{r.nickname}"</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1 shrink-0">
+                    {/* Transport pill */}
+                    <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">
+                      {r.driving ? 'Driving' : 'Flying'}
                     </span>
-                  )}
+                    {/* Carpool/ride sub-pill */}
+                    {r.driving ? (
+                      r.needs_ride === true &&
+                        <span className="text-xs text-green-400 border border-green-400/30 bg-green-400/10 rounded-full px-2 py-0.5">Can provide carpool</span>
+                    ) : (
+                      r.needs_ride === true &&
+                        <span className="text-xs text-yellow-400 border border-yellow-400/30 bg-yellow-400/10 rounded-full px-2 py-0.5">Needs ride</span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Arrival */}
-                <div className="text-sm">
-                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Arrival</p>
-                  <p className="text-gray-300">
-                    {formatDate(r.arrival_date)}
-                    {r.arrival_time ? ` · ${formatTime(r.arrival_time)}` : ''}
-                    {r.arrival_flight ? ` · ${r.arrival_flight}` : ''}
-                  </p>
+                <div className="text-sm space-y-2">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Arrival</p>
+                    <p className="text-gray-300">
+                      {formatDate(r.arrival_date)}
+                      {r.arrival_time ? ` · ${formatTime(r.arrival_time)}` : ''}
+                    </p>
+                  </div>
+                  {r.arrival_flight && (
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
+                      <p className="text-gray-300">{r.arrival_flight}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Departure */}
-                <div className="text-sm">
-                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Departure</p>
-                  <p className="text-gray-300">
-                    {formatDate(r.departure_date)}
-                    {r.departure_time ? ` · ${formatTime(r.departure_time)}` : ''}
-                    {r.departure_flight ? ` · ${r.departure_flight}` : ''}
-                  </p>
+                <div className="text-sm space-y-2">
+                  <div>
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Departure</p>
+                    <p className="text-gray-300">
+                      {formatDate(r.departure_date)}
+                      {r.departure_time ? ` · ${formatTime(r.departure_time)}` : ''}
+                    </p>
+                  </div>
+                  {r.departure_flight && (
+                    <div>
+                      <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Flight Info</p>
+                      <p className="text-gray-300">{r.departure_flight}</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Hotel */}
