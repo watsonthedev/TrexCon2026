@@ -133,10 +133,10 @@ export function RSVPsPage() {
               >
                 {/* Name + pills */}
                 <div className="sm:col-span-2 flex items-start justify-between gap-2 mb-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-white font-bold">@{r.twitch_username}</span>
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <span className="text-white font-bold truncate">@{r.twitch_username}</span>
                     {r.nickname && (
-                      <span className="text-gray-400 text-sm">"{r.nickname}"</span>
+                      <span className="text-gray-400 text-sm truncate">"{r.nickname}"</span>
                     )}
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
