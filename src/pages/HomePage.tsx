@@ -80,6 +80,11 @@ export function HomePage() {
 
         <main className="flex-1 max-w-2xl w-full mx-auto px-4 py-8 space-y-6">
 
+          {/* Announcement banner */}
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-5 py-3 text-yellow-300 text-sm text-center">
+            ⚠️ Please bring close toed shoes for the brewery tour ⚠️
+          </div>
+
           {/* Happening Now */}
           {current ? (
             <section>
